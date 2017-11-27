@@ -9,7 +9,7 @@ A simple subclass of UIButton imitates the animation effect of favor button in D
 -------------
 
 ### 效果:
-![image]()
+![image](https://github.com/xiaosao6/CCAnimationBtn/blob/master/btn-anim.gif)
 
 ### 示例:  
 ```oc
@@ -28,7 +28,8 @@ CCAnimationBtn *btn = [[CCAnimationBtn alloc] initWithFrame:CGRectMake(60, 60, 1
 - 需自行替换2种状态的图片 
 
 ### 原理说明
-绘制放射线，使用CAShapeLayer结合mask绘制多个三角形图层
+绘制放射线，使用CAShapeLayer结合mask绘制多个三角形图层；
+
 动画主要使用CABasicAnimation进行缩放，位移，旋转，透明度等属性进行动画
 
 ### 使用方法
