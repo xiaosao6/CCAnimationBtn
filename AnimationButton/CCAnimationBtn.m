@@ -109,13 +109,14 @@
 }
 
 -(void)makeComingAnimationWithCenterImage {
-    self.imgLayer.affineTransform = CGAffineTransformMakeScale(0.0, 0.0);
+    self.imgLayer.affineTransform = CGAffineTransformScale(self.imgLayer.affineTransform, 0.0, 0.0);
+    self.imgLayer.affineTransform = CGAffineTransformRotate(self.imgLayer.affineTransform, 0.1 * M_PI);
+    
+    NSNumber *from  = [NSNumber numberWithFloat:0.1 * M_PI];
+    NSNumber *to    = [NSNumber numberWithFloat:0.0];
+    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:animationTime/3.5] forKey:@"rotation"];
     
     [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.scale" From:@0.1 To:@1.0 BeginTime:animationTime/4.0] forKey:@"scale"];
-    
-    NSNumber *from  = [NSNumber numberWithFloat:-0.08 * M_PI];
-    NSNumber *to    = [NSNumber numberWithFloat:0.0];
-    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:animationTime/3.6] forKey:@"rotation"];
 }
 
 -(void)makeAnimationWithLine:(CAShapeLayer *)line {
@@ -167,28 +168,69 @@
     return anim_spring;
 }
 
++(CALayer *)heartLayerWithFrame:(CGRect)rect FillColor:(UIColor *)fillColor{
+    CALayer *visibleLayer = [CALayer layer];
+    visibleLayer.frame = rect;
+    visibleLayer.backgroundColor = fillColor.CGColor;
+    
+    // 左右间距
+    CGFloat padding = 4.0;
+    // 半径(小圆半径)
+    CGFloat curveRadius = ((rect.size.width - 2 * padding)/2.0) / (cos(2 * M_PI/8.0) + 1.0);
+    // 贝塞尔曲线
+    UIBezierPath *heartPath = [UIBezierPath bezierPath];
+    // 起点(底部，圆的第一个点)
+    CGPoint tipLocation = CGPointMake(rect.size.width/2, rect.size.height-padding);
+    // 从起点开始画
+    [heartPath moveToPoint:tipLocation];
+    // (左圆的第二个点)
+    CGPoint topLeftCurveStart = CGPointMake(padding, rect.size.height/2.8);
+    // 添加二次曲线
+    [heartPath addQuadCurveToPoint:topLeftCurveStart controlPoint:CGPointMake(topLeftCurveStart.x, topLeftCurveStart.y + curveRadius)];
+    // 画左圆
+    [heartPath addArcWithCenter:CGPointMake(topLeftCurveStart.x+curveRadius, topLeftCurveStart.y) radius:curveRadius startAngle:M_PI endAngle:-M_PI*0.25 clockwise:YES];
+    // (左圆的第二个点)
+    CGPoint topRightCurveStart = CGPointMake((rect.size.width - padding) - curveRadius, topLeftCurveStart.y);
+    // 画右圆
+    [heartPath addArcWithCenter:CGPointMake(topRightCurveStart.x, topRightCurveStart.y) radius:curveRadius startAngle:-M_PI*0.75 endAngle:0 clockwise:YES];
+    // 右侧控制点
+    CGPoint topRightCurveEnd = CGPointMake((rect.size.width - padding), topLeftCurveStart.y);
+    // 添加二次曲线
+    [heartPath addQuadCurveToPoint:tipLocation controlPoint:CGPointMake(topRightCurveEnd.x, topRightCurveEnd.y+curveRadius)];
+    // 设置填充色
+    [fillColor setFill];
+    // 填充
+    [heartPath fill];
+    
+    //轮廓蒙版
+    CAShapeLayer *shapeMask = [CAShapeLayer layer];
+    shapeMask.path = heartPath.CGPath;
+    shapeMask.bounds = rect;
+    shapeMask.position = visibleLayer.position;
+    shapeMask.fillColor = [UIColor whiteColor].CGColor;
+    shapeMask.fillRule = kCAFillRuleEvenOdd;
+    
+    visibleLayer.mask = shapeMask;
+    return visibleLayer;
+}
+
 #pragma mark -
 #pragma mark - getter/setter
 -(CALayer *)imgLayer{
     if (!_imgLayer) {
-        _imgLayer = [CALayer layer];
-//        _imgLayer.borderColor = [UIColor grayColor].CGColor;
-//        _imgLayer.borderWidth = 2;
         CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
-        _imgLayer.contents = (__bridge id)([UIImage imageNamed:@"heart-icon"].CGImage);
-        _imgLayer.frame = CGRectMake(0.5*(self.frame.size.width - minlength * imgSizePercent),
-                                     0.5*(self.frame.size.height - minlength * imgSizePercent),
-                                     minlength * imgSizePercent,
-                                     minlength * imgSizePercent);
+        CGRect frame = CGRectMake(0.5*(self.frame.size.width - minlength * imgSizePercent),
+                                  0.5*(self.frame.size.height - minlength * imgSizePercent),
+                                  minlength * imgSizePercent,
+                                  minlength * imgSizePercent);
+        _imgLayer = [self.class heartLayerWithFrame:frame FillColor:[UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1]];
     }
     return _imgLayer;
 }
 
 -(CALayer *)unChosenImgLayer{
     if (!_unChosenImgLayer) {
-        _unChosenImgLayer = [CALayer layer];
-        _unChosenImgLayer.contents = (__bridge id)([UIImage imageNamed:@"heart-icon-unchosen"].CGImage);
-        _unChosenImgLayer.frame = self.imgLayer.frame;
+        _unChosenImgLayer = [self.class heartLayerWithFrame:self.imgLayer.frame FillColor:[UIColor whiteColor]];
     }
     return _unChosenImgLayer;
 }

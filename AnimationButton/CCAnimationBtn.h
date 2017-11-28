@@ -18,7 +18,7 @@ static const CGFloat lineLengthPercent = 0.75;
 //动画总时长
 static const CFTimeInterval animationTime = 1.1;
 //中心图片相对控件尺寸比例
-static const CGFloat imgSizePercent = 0.72;
+static const CGFloat imgSizePercent = 0.7;
 
 
 @interface CCAnimationBtn : UIButton
