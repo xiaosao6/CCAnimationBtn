@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45564E3D1FCCF8250077FC46 /* HeartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 45564E3C1FCCF8250077FC46 /* HeartView.m */; };
 		45DF6B321FC93EF6001D8376 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B311FC93EF6001D8376 /* AppDelegate.m */; };
 		45DF6B351FC93EF6001D8376 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B341FC93EF6001D8376 /* ViewController.m */; };
 		45DF6B381FC93EF6001D8376 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45DF6B361FC93EF6001D8376 /* Main.storyboard */; };
@@ -17,6 +18,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		45564E3B1FCCF8250077FC46 /* HeartView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HeartView.h; sourceTree = "<group>"; };
+		45564E3C1FCCF8250077FC46 /* HeartView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HeartView.m; sourceTree = "<group>"; };
 		45DF6B2D1FC93EF6001D8376 /* AnimationButton.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimationButton.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		45DF6B301FC93EF6001D8376 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		45DF6B311FC93EF6001D8376 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -72,6 +75,8 @@
 				45DF6B3F1FC93EF6001D8376 /* main.m */,
 				45DF6B461FC93F2A001D8376 /* CCAnimationBtn.h */,
 				45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */,
+				45564E3B1FCCF8250077FC46 /* HeartView.h */,
+				45564E3C1FCCF8250077FC46 /* HeartView.m */,
 			);
 			path = AnimationButton;
 			sourceTree = "<group>";
@@ -150,6 +155,7 @@
 				45DF6B351FC93EF6001D8376 /* ViewController.m in Sources */,
 				45DF6B481FC93F2A001D8376 /* CCAnimationBtn.m in Sources */,
 				45DF6B401FC93EF6001D8376 /* main.m in Sources */,
+				45564E3D1FCCF8250077FC46 /* HeartView.m in Sources */,
 				45DF6B321FC93EF6001D8376 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
