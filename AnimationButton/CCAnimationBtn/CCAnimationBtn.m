@@ -8,12 +8,7 @@
 
 #import "CCAnimationBtn.h"
 
-//线条颜色
-//..........................
-
-
 @interface CCAnimationBtn ()
-//@property (nonatomic, assign) BOOL  chosen;
 @property (nonatomic, strong) NSArray <CAShapeLayer *>  *lines;
 @property (nonatomic, strong) CALayer  *imgLayer;
 @property (nonatomic, strong) CALayer  *unChosenImgLayer;
@@ -37,16 +32,19 @@
 }
 
 - (void)setupUI{
+    self.lineCount = 6;
+    self.lineWidth = 11.5;
+    self.lineLengthPercent = 0.75;
+    self.imgSizePercent = 0.7;
+    self.animationTime = 1.1;
+    self.lineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
+    
     self.layer.masksToBounds = YES;
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
 //    self.layer.borderWidth = 2;
     
     [self.layer addSublayer:self.unChosenImgLayer];
 }
-
-//-(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
-//    self.chosen = !self.chosen;
-//}
 
 #pragma mark -
 #pragma mark - make Animations
@@ -58,14 +56,9 @@
     }];
     
     [CATransaction begin];
-    
     [self makeAnimationWithUnChosenImageFrom:@1 To:@0];
-    
-    [self.layer addSublayer:self.imgLayer];
     [self makeComingAnimationWithCenterImage];
-    
     for (CAShapeLayer *line in self.lines) {
-        [self.layer addSublayer: line];
         [self makeAnimationWithLine:line];
     }
     [CATransaction commit];
@@ -78,10 +71,8 @@
     }];
     
     [CATransaction begin];
-    
     [self makeAnimationWithUnChosenImageFrom:@0 To:@1];
     [self makeFadingAnimationWithCenterImage];
-    
     [CATransaction commit];
 }
 
@@ -90,7 +81,7 @@
     CABasicAnimation *anim_opacity = [CABasicAnimation animationWithKeyPath:@"opacity"];
     anim_opacity.fillMode = kCAFillModeForwards;
     anim_opacity.removedOnCompletion = NO;
-    anim_opacity.duration = animationTime/4.0;
+    anim_opacity.duration = self.animationTime/4.0;
     anim_opacity.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
     
     anim_opacity.fromValue = from;
@@ -100,7 +91,7 @@
 
 -(void)makeFadingAnimationWithCenterImage {
     CABasicAnimation *anim_scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    anim_scale.duration = animationTime/4.0;
+    anim_scale.duration = self.animationTime/4.0;
     anim_scale.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionDefault];
     
     anim_scale.fromValue = @1;
@@ -109,20 +100,22 @@
 }
 
 -(void)makeComingAnimationWithCenterImage {
+    [self.layer addSublayer:self.imgLayer];
     self.imgLayer.affineTransform = CGAffineTransformScale(self.imgLayer.affineTransform, 0.0, 0.0);
     self.imgLayer.affineTransform = CGAffineTransformRotate(self.imgLayer.affineTransform, 0.1 * M_PI);
     
     NSNumber *from  = [NSNumber numberWithFloat:0.1 * M_PI];
     NSNumber *to    = [NSNumber numberWithFloat:0.0];
-    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:animationTime/3.5] forKey:@"rotation"];
+    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:self.animationTime/3.5] forKey:@"rotation"];
     
-    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.scale" From:@0.1 To:@1.0 BeginTime:animationTime/4.0] forKey:@"scale"];
+    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.scale" From:@0.1 To:@1.0 BeginTime:self.animationTime/4.0] forKey:@"scale"];
 }
 
 -(void)makeAnimationWithLine:(CAShapeLayer *)line {
+    [self.layer addSublayer: line];
     //缩放动画
     CABasicAnimation *anim_scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    anim_scale.duration = animationTime/4.0;
+    anim_scale.duration = self.animationTime/4.0;
     anim_scale.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
     
     anim_scale.fromValue = @0.01;
@@ -132,15 +125,15 @@
     //位移动画
     NSInteger index = [self.lines indexOfObject:line];
     CGFloat maxSize = MAX(self.bounds.size.width, self.bounds.size.height);
-    double moveLength = (maxSize * 0.5) / sin(2 * M_PI/lineCount);
-    double xRange = moveLength * sin((2 * M_PI/lineCount) *(index + 1));
-    double yRange = moveLength * cos((2 * M_PI/lineCount) *(index + 1));
+    double moveLength = (maxSize * 0.5) / sin(2 * M_PI/self.lineCount);
+    double xRange = moveLength * sin((2 * M_PI/self.lineCount) *(index + 1));
+    double yRange = moveLength * cos((2 * M_PI/self.lineCount) *(index + 1));
     
     CABasicAnimation *anim_trans = [CABasicAnimation animationWithKeyPath:@"transform.translation"];
     anim_trans.fillMode = kCAFillModeForwards;
     anim_trans.removedOnCompletion = NO;
-    anim_trans.beginTime = CACurrentMediaTime() + animationTime/4.0;
-    anim_trans.duration = animationTime/4.0;
+    anim_trans.beginTime = CACurrentMediaTime() + self.animationTime/4.0;
+    anim_trans.duration = self.animationTime/4.0;
     anim_trans.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseOut];
     
     anim_trans.fromValue = [NSValue valueWithCGPoint:CGPointZero];
@@ -157,8 +150,8 @@
     anim_spring.fromValue = from;
     anim_spring.toValue   = to;
     anim_spring.beginTime = CACurrentMediaTime() + beginTime;
-    anim_spring.duration = animationTime/2.0;
-    anim_spring.speed = 1.0/animationTime;
+    anim_spring.duration = self.animationTime/2.0;
+    anim_spring.speed = 1.0/self.animationTime;
     
     anim_spring.mass = 1;
     anim_spring.damping = 8;
@@ -173,11 +166,11 @@
     visibleLayer.frame = rect;
     visibleLayer.backgroundColor = fillColor.CGColor;
     
-    // 左右间距
+    // 左右边距
     CGFloat padding = 4.0;
     // 半径(小圆半径)
     CGFloat curveRadius = ((rect.size.width - 2 * padding)/2.0) / (cos(2 * M_PI/8.0) + 1.0);
-    // 贝塞尔曲线
+    
     UIBezierPath *heartPath = [UIBezierPath bezierPath];
     // 起点(底部，圆的第一个点)
     CGPoint tipLocation = CGPointMake(rect.size.width/2, rect.size.height-padding);
@@ -189,7 +182,7 @@
     [heartPath addQuadCurveToPoint:topLeftCurveStart controlPoint:CGPointMake(topLeftCurveStart.x, topLeftCurveStart.y + curveRadius)];
     // 画左圆
     [heartPath addArcWithCenter:CGPointMake(topLeftCurveStart.x+curveRadius, topLeftCurveStart.y) radius:curveRadius startAngle:M_PI endAngle:-M_PI*0.25 clockwise:YES];
-    // (左圆的第二个点)
+    // (右圆的第二个点)
     CGPoint topRightCurveStart = CGPointMake((rect.size.width - padding) - curveRadius, topLeftCurveStart.y);
     // 画右圆
     [heartPath addArcWithCenter:CGPointMake(topRightCurveStart.x, topRightCurveStart.y) radius:curveRadius startAngle:-M_PI*0.75 endAngle:0 clockwise:YES];
@@ -219,11 +212,11 @@
 -(CALayer *)imgLayer{
     if (!_imgLayer) {
         CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
-        CGRect frame = CGRectMake(0.5*(self.frame.size.width - minlength * imgSizePercent),
-                                  0.5*(self.frame.size.height - minlength * imgSizePercent),
-                                  minlength * imgSizePercent,
-                                  minlength * imgSizePercent);
-        _imgLayer = [self.class heartLayerWithFrame:frame FillColor:[UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1]];
+        CGRect frame = CGRectMake(0.5*(self.frame.size.width - minlength * self.imgSizePercent),
+                                  0.5*(self.frame.size.height - minlength * self.imgSizePercent),
+                                  minlength * self.imgSizePercent,
+                                  minlength * self.imgSizePercent);
+        _imgLayer = [self.class heartLayerWithFrame:frame FillColor:self.lineColor];
     }
     return _imgLayer;
 }
@@ -237,20 +230,20 @@
 
 -(NSArray<CAShapeLayer *> *)lines{
     if (!_lines) {
-        CGRect lineFrame = CGRectMake(0, 0, self.bounds.size.width * lineLengthPercent, self.bounds.size.height * lineLengthPercent);
+        CGRect lineFrame = CGRectMake(0, 0, self.bounds.size.width * self.lineLengthPercent, self.bounds.size.height * self.lineLengthPercent);
         
         NSMutableArray *tmpArr = [[NSMutableArray alloc] init];
-        for (int i=0; i<lineCount; i++) {
+        for (int i=0; i<self.lineCount; i++) {
             CAShapeLayer *lineLayer   = [CAShapeLayer layer];
             lineLayer.bounds          = self.frame;
             lineLayer.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-            lineLayer.backgroundColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1].CGColor;
+            lineLayer.backgroundColor = self.lineColor.CGColor;
             
             CAShapeLayer *lineMask = [CAShapeLayer layer];
             CGMutablePathRef shapePath = CGPathCreateMutable();
             CGPathMoveToPoint(shapePath, nil, CGRectGetMidX(lineFrame), CGRectGetMidY(lineFrame));
-            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 + 0.5*lineWidth, lineFrame.origin.y);
-            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 - 0.5*lineWidth, lineFrame.origin.y);
+            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 + 0.5*self.lineWidth, lineFrame.origin.y);
+            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 - 0.5*self.lineWidth, lineFrame.origin.y);
             CGPathAddLineToPoint(shapePath, nil, CGRectGetMidX(lineFrame), CGRectGetMidY(lineFrame));
             lineMask.path = shapePath;
             CGPathRelease(shapePath);
@@ -260,7 +253,7 @@
             lineMask.fillColor = [UIColor whiteColor].CGColor;
             lineMask.fillRule = kCAFillRuleEvenOdd;
             
-            lineLayer.transform = CATransform3DMakeRotation((2 * M_PI / lineCount) * (i + 1), 0.0, 0.0, 1.0);
+            lineLayer.transform = CATransform3DMakeRotation((2 * M_PI / self.lineCount) * (i + 1), 0.0, 0.0, 1.0);
             lineLayer.mask = lineMask;
             
             [tmpArr addObject: lineLayer];
@@ -269,15 +262,6 @@
     }
     return _lines;
 }
-
-//-(void)setChosen:(BOOL)chosen{
-//    _chosen = chosen;
-//    if (_chosen) {
-//        [self makeChosenAnimation];
-//    }else{
-//        [self makeUnchosenAnimation];
-//    }
-//}
 
 -(void)setSelected:(BOOL)selected{
     [super setSelected:selected];

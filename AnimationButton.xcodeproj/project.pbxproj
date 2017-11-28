@@ -42,6 +42,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		45564E3E1FCD33ED0077FC46 /* CCAnimationBtn */ = {
+			isa = PBXGroup;
+			children = (
+				45DF6B461FC93F2A001D8376 /* CCAnimationBtn.h */,
+				45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */,
+			);
+			path = CCAnimationBtn;
+			sourceTree = "<group>";
+		};
 		45DF6B241FC93EF6001D8376 = {
 			isa = PBXGroup;
 			children = (
@@ -61,17 +70,16 @@
 		45DF6B2F1FC93EF6001D8376 /* AnimationButton */ = {
 			isa = PBXGroup;
 			children = (
-				45DF6B301FC93EF6001D8376 /* AppDelegate.h */,
-				45DF6B311FC93EF6001D8376 /* AppDelegate.m */,
+				45564E3E1FCD33ED0077FC46 /* CCAnimationBtn */,
 				45DF6B331FC93EF6001D8376 /* ViewController.h */,
 				45DF6B341FC93EF6001D8376 /* ViewController.m */,
+				45DF6B301FC93EF6001D8376 /* AppDelegate.h */,
+				45DF6B311FC93EF6001D8376 /* AppDelegate.m */,
 				45DF6B361FC93EF6001D8376 /* Main.storyboard */,
 				45DF6B391FC93EF6001D8376 /* Assets.xcassets */,
 				45DF6B3B1FC93EF6001D8376 /* LaunchScreen.storyboard */,
 				45DF6B3E1FC93EF6001D8376 /* Info.plist */,
 				45DF6B3F1FC93EF6001D8376 /* main.m */,
-				45DF6B461FC93F2A001D8376 /* CCAnimationBtn.h */,
-				45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */,
 			);
 			path = AnimationButton;
 			sourceTree = "<group>";
