@@ -207,23 +207,26 @@
     return visibleLayer;
 }
 
+-(CGRect)imageLayerFrame{
+    CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
+    return CGRectMake(0.5*(self.frame.size.width - minlength * self.imgSizePercent),
+                              0.5*(self.frame.size.height - minlength * self.imgSizePercent),
+                              minlength * self.imgSizePercent,
+                              minlength * self.imgSizePercent);
+}
+
 #pragma mark -
 #pragma mark - getter/setter
 -(CALayer *)imgLayer{
     if (!_imgLayer) {
-        CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
-        CGRect frame = CGRectMake(0.5*(self.frame.size.width - minlength * self.imgSizePercent),
-                                  0.5*(self.frame.size.height - minlength * self.imgSizePercent),
-                                  minlength * self.imgSizePercent,
-                                  minlength * self.imgSizePercent);
-        _imgLayer = [self.class heartLayerWithFrame:frame FillColor:self.lineColor];
+        _imgLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.lineColor];
     }
     return _imgLayer;
 }
 
 -(CALayer *)unChosenImgLayer{
     if (!_unChosenImgLayer) {
-        _unChosenImgLayer = [self.class heartLayerWithFrame:self.imgLayer.frame FillColor:[UIColor whiteColor]];
+        _unChosenImgLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:[UIColor whiteColor]];
     }
     return _unChosenImgLayer;
 }
