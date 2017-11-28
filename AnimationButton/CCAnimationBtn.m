@@ -176,8 +176,8 @@
 //        _imgLayer.borderWidth = 2;
         CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
         _imgLayer.contents = (__bridge id)([UIImage imageNamed:@"heart-icon"].CGImage);
-        _imgLayer.frame = CGRectMake(self.frame.size.width / 2 - 0.5 * minlength * imgSizePercent,
-                                     self.frame.size.height / 2 - 0.5 * minlength * imgSizePercent,
+        _imgLayer.frame = CGRectMake(0.5*(self.frame.size.width - minlength * imgSizePercent),
+                                     0.5*(self.frame.size.height - minlength * imgSizePercent),
                                      minlength * imgSizePercent,
                                      minlength * imgSizePercent);
     }
@@ -195,13 +195,13 @@
 
 -(NSArray<CAShapeLayer *> *)lines{
     if (!_lines) {
-        CGRect lineFrame = CGRectMake(0, 0, self.frame.size.width * lineLengthPercent, self.frame.size.height * lineLengthPercent);
+        CGRect lineFrame = CGRectMake(0, 0, self.bounds.size.width * lineLengthPercent, self.bounds.size.height * lineLengthPercent);
         
         NSMutableArray *tmpArr = [[NSMutableArray alloc] init];
         for (int i=0; i<lineCount; i++) {
             CAShapeLayer *lineLayer   = [CAShapeLayer layer];
             lineLayer.bounds          = self.frame;
-            lineLayer.position = CGPointMake(CGRectGetMidX(self.imgLayer.frame), CGRectGetMidY(self.imgLayer.frame));
+            lineLayer.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
             lineLayer.backgroundColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1].CGColor;
             
             CAShapeLayer *lineMask = [CAShapeLayer layer];
