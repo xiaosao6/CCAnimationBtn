@@ -125,7 +125,7 @@
     //位移动画
     NSInteger index = [self.lines indexOfObject:line];
     CGFloat maxSize = MAX(self.bounds.size.width, self.bounds.size.height);
-    double moveLength = (maxSize * 0.5) / sin(2 * M_PI/self.lineCount);
+    double moveLength = self.lines.count != 5 ? (maxSize * 0.5)/sin(2 * M_PI/self.lineCount) : (maxSize * 0.5)/cos(M_PI/self.lineCount);
     double xRange = moveLength * sin((2 * M_PI/self.lineCount) *(index + 1));
     double yRange = moveLength * cos((2 * M_PI/self.lineCount) *(index + 1));
     
