@@ -124,8 +124,8 @@
     
     //位移动画
     NSInteger index = [self.lines indexOfObject:line];
-    CGFloat maxSize = MAX(self.bounds.size.width, self.bounds.size.height);
-    double moveLength = self.lines.count != 5 ? (maxSize * 0.5)/sin(2 * M_PI/self.lineCount) : (maxSize * 0.5)/cos(M_PI/self.lineCount);
+    CGFloat maxSize = MAX(CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
+    double moveLength = MAX((maxSize * 0.5)/sin(2 * M_PI/self.lineCount), (maxSize * 0.5)/cos(M_PI/self.lineCount));
     double xRange = moveLength * sin((2 * M_PI/self.lineCount) *(index + 1));
     double yRange = moveLength * cos((2 * M_PI/self.lineCount) *(index + 1));
     
@@ -165,16 +165,15 @@
     CALayer *visibleLayer = [CALayer layer];
     visibleLayer.frame = rect;
     visibleLayer.backgroundColor = fillColor.CGColor;
-    
+    //注意，此心形形状是按照顶部凹角90°来绘制的，需要调整可自行修改
     // 左右边距
     CGFloat padding = 4.0;
-    // 半径(小圆半径)
+    // 小圆半径
     CGFloat curveRadius = ((rect.size.width - 2 * padding)/2.0) / (cos(2 * M_PI/8.0) + 1.0);
     
     UIBezierPath *heartPath = [UIBezierPath bezierPath];
     // 起点(底部，圆的第一个点)
     CGPoint tipLocation = CGPointMake(rect.size.width/2, rect.size.height-padding);
-    // 从起点开始画
     [heartPath moveToPoint:tipLocation];
     // (左圆的第二个点)
     CGPoint topLeftCurveStart = CGPointMake(padding, rect.size.height/2.8);
@@ -192,7 +191,6 @@
     [heartPath addQuadCurveToPoint:tipLocation controlPoint:CGPointMake(topRightCurveEnd.x, topRightCurveEnd.y+curveRadius)];
     // 设置填充色
     [fillColor setFill];
-    // 填充
     [heartPath fill];
     
     //轮廓蒙版
