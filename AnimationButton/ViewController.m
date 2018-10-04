@@ -7,7 +7,7 @@
 //
 
 #import "ViewController.h"
-#import "CCAnimationBtn.h"
+#import "UIButton+CCFavoriteAnimation.h"
 
 @interface ViewController ()
 
@@ -19,13 +19,13 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:0.86];
     
-    CCAnimationBtn *btn = [[CCAnimationBtn alloc] initWithFrame:CGRectMake(60, 60, 150, 150)];
+    UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(60, 60, 150, 150)];
     [btn addTarget:self action:@selector(btnClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
 }
 
 -(void)btnClicked:(UIButton *)btn{
-    btn.selected = !btn.selected;
+    btn.ccFavorite = !btn.ccFavorite;
 }
 
 

@@ -1,20 +1,30 @@
 //
-//  CCAnimationBtn.m
+//  UIButton+CCFavoriteAnimation.m
 //  AnimationButton
 //
-//  Created by sischen on 2017/11/25.
-//  Copyright © 2017年 pcbdoor.com. All rights reserved.
+//  Created by sischen on 2018/10/4.
+//  Copyright © 2018年 Xiaosao6. All rights reserved.
 //
 
-#import "CCAnimationBtn.h"
+#import "UIButton+ccFavoriteAnimation.h"
+#import <objc/runtime.h>
 
-@interface CCAnimationBtn ()
-@property (nonatomic, strong) NSArray <CAShapeLayer *>  *lines;
-@property (nonatomic, strong) CALayer  *imgLayer;
-@property (nonatomic, strong) CALayer  *unChosenImgLayer;
-@end
 
-@implementation CCAnimationBtn
+static void *ccAnimationPropsDict   = &ccAnimationPropsDict;
+static void *ccImgLayer             = &ccImgLayer;
+static void *ccLines                = &ccLines;
+static void *ccUnChosenImgLayer     = &ccUnChosenImgLayer;
+
+static NSString *lineCountKey           = @"lineCount";
+static NSString *lineWidthKey           = @"lineWidth";
+static NSString *lineLengthPercentKey   = @"lineLengthPercent";
+static NSString *imgSizePercentKey      = @"imgSizePercent";
+static NSString *animationTimeKey       = @"animationTime";
+static NSString *lineColorKey           = @"lineColor";
+
+
+@implementation UIButton (CCFavoriteAnimation)
+
 
 #pragma mark -
 #pragma mark - init
@@ -32,12 +42,12 @@
 }
 
 - (void)setupUI{
-    self.lineCount = 6;
-    self.lineWidth = 11.5;
-    self.lineLengthPercent = 0.75;
-    self.imgSizePercent = 0.7;
-    self.animationTime = 1.1;
-    self.lineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
+    self.ccLineCount = 6;
+    self.ccLineWidth = 10.0;
+    self.ccLineLengthRatio = 0.4;
+    self.ccImgSizeRatio  = 0.7;
+    self.ccAnimationTime = 1.2;
+    self.ccLineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
     
     self.layer.masksToBounds = YES;
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
@@ -47,7 +57,7 @@
 }
 
 #pragma mark -
-#pragma mark - make Animations
+#pragma mark - animations implement
 -(void)makeChosenAnimation{
     self.userInteractionEnabled = NO;
     [CATransaction setCompletionBlock:^{
@@ -81,7 +91,7 @@
     CABasicAnimation *anim_opacity = [CABasicAnimation animationWithKeyPath:@"opacity"];
     anim_opacity.fillMode = kCAFillModeForwards;
     anim_opacity.removedOnCompletion = NO;
-    anim_opacity.duration = self.animationTime/4.0;
+    anim_opacity.duration = self.ccAnimationTime/4.0;
     anim_opacity.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
     
     anim_opacity.fromValue = from;
@@ -91,7 +101,7 @@
 
 -(void)makeFadingAnimationWithCenterImage {
     CABasicAnimation *anim_scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    anim_scale.duration = self.animationTime/4.0;
+    anim_scale.duration = self.ccAnimationTime/4.0;
     anim_scale.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionDefault];
     
     anim_scale.fromValue = @1;
@@ -106,16 +116,18 @@
     
     NSNumber *from  = [NSNumber numberWithFloat:0.1 * M_PI];
     NSNumber *to    = [NSNumber numberWithFloat:0.0];
-    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:self.animationTime/3.5] forKey:@"rotation"];
+    CAAnimation *anim1 = [self imgSpringAnimationWithKeyPath:@"transform.rotation.z" From:from To:to BeginTime:self.ccAnimationTime/3.5];
+    [self.imgLayer addAnimation:anim1 forKey:@"rotation"];
     
-    [self.imgLayer addAnimation:[self imgSpringAnimationWithKeyPath:@"transform.scale" From:@0.1 To:@1.0 BeginTime:self.animationTime/4.0] forKey:@"scale"];
+    CAAnimation *anim2 = [self imgSpringAnimationWithKeyPath:@"transform.scale" From:@0.1 To:@1.0 BeginTime:self.ccAnimationTime/4.0];
+    [self.imgLayer addAnimation:anim2 forKey:@"scale"];
 }
 
 -(void)makeAnimationWithLine:(CAShapeLayer *)line {
     [self.layer addSublayer: line];
     //缩放动画
     CABasicAnimation *anim_scale = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
-    anim_scale.duration = self.animationTime/4.0;
+    anim_scale.duration = self.ccAnimationTime/4.0;
     anim_scale.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseIn];
     
     anim_scale.fromValue = @0.01;
@@ -125,15 +137,15 @@
     //位移动画
     NSInteger index = [self.lines indexOfObject:line];
     CGFloat maxSize = MAX(CGRectGetWidth(self.bounds), CGRectGetHeight(self.bounds));
-    double moveLength = MAX((maxSize * 0.5)/sin(2 * M_PI/self.lineCount), (maxSize * 0.5)/cos(M_PI/self.lineCount));
-    double xRange = moveLength * sin((2 * M_PI/self.lineCount) *(index + 1));
-    double yRange = moveLength * cos((2 * M_PI/self.lineCount) *(index + 1));
+    double moveLength = MAX((maxSize * 0.5)/sin(2 * M_PI/self.ccLineCount), (maxSize * 0.5)/cos(M_PI/self.ccLineCount));
+    double xRange = moveLength * sin((2 * M_PI/self.ccLineCount) *(index + 1));
+    double yRange = moveLength * cos((2 * M_PI/self.ccLineCount) *(index + 1));
     
     CABasicAnimation *anim_trans = [CABasicAnimation animationWithKeyPath:@"transform.translation"];
     anim_trans.fillMode = kCAFillModeForwards;
     anim_trans.removedOnCompletion = NO;
-    anim_trans.beginTime = CACurrentMediaTime() + self.animationTime/4.0;
-    anim_trans.duration = self.animationTime/4.0;
+    anim_trans.beginTime = CACurrentMediaTime() + self.ccAnimationTime/4.0;
+    anim_trans.duration = self.ccAnimationTime/4.0;
     anim_trans.timingFunction = [CAMediaTimingFunction functionWithName: kCAMediaTimingFunctionEaseOut];
     
     anim_trans.fromValue = [NSValue valueWithCGPoint:CGPointZero];
@@ -142,7 +154,7 @@
 }
 
 #pragma mark -
-#pragma mark - Private
+#pragma mark - private
 -(CASpringAnimation *)imgSpringAnimationWithKeyPath:(NSString *)keypath From:(id)from To:(id)to BeginTime:(CFTimeInterval)beginTime{
     CASpringAnimation *anim_spring = [CASpringAnimation animationWithKeyPath:keypath];
     anim_spring.fillMode = kCAFillModeForwards;
@@ -150,8 +162,8 @@
     anim_spring.fromValue = from;
     anim_spring.toValue   = to;
     anim_spring.beginTime = CACurrentMediaTime() + beginTime;
-    anim_spring.duration = self.animationTime/2.0;
-    anim_spring.speed = 1.0/self.animationTime;
+    anim_spring.duration = self.ccAnimationTime/2.0;
+    anim_spring.speed = 1.0/self.ccAnimationTime;
     
     anim_spring.mass = 1;
     anim_spring.damping = 8;
@@ -207,44 +219,51 @@
 
 -(CGRect)imageLayerFrame{
     CGFloat minlength = MIN(self.frame.size.width, self.frame.size.height);
-    return CGRectMake(0.5*(self.frame.size.width - minlength * self.imgSizePercent),
-                              0.5*(self.frame.size.height - minlength * self.imgSizePercent),
-                              minlength * self.imgSizePercent,
-                              minlength * self.imgSizePercent);
+    return CGRectMake(0.5*(self.frame.size.width - minlength * self.ccImgSizeRatio),
+                      0.5*(self.frame.size.height - minlength * self.ccImgSizeRatio),
+                      minlength * self.ccImgSizeRatio,
+                      minlength * self.ccImgSizeRatio);
 }
 
 #pragma mark -
 #pragma mark - getter/setter
 -(CALayer *)imgLayer{
-    if (!_imgLayer) {
-        _imgLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.lineColor];
+    CALayer *layer = objc_getAssociatedObject(self, &ccImgLayer);
+    if (layer == nil){
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.ccLineColor];
+        objc_setAssociatedObject(self, &ccImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return newLayer;
     }
-    return _imgLayer;
+    return layer;
 }
 
 -(CALayer *)unChosenImgLayer{
-    if (!_unChosenImgLayer) {
-        _unChosenImgLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:[UIColor whiteColor]];
+    CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
+    if (layer == nil){
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:UIColor.whiteColor];
+        objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return newLayer;
     }
-    return _unChosenImgLayer;
+    return layer;
 }
 
 -(NSArray<CAShapeLayer *> *)lines{
-    if (!_lines) {
-        CGRect lineFrame = CGRectMake(0, 0, self.bounds.size.width * self.lineLengthPercent, self.bounds.size.height * self.lineLengthPercent);
+    NSArray<CAShapeLayer *> *lines_ = objc_getAssociatedObject(self, &ccLines);
+    if (lines_ == nil) {
+        CGRect lineFrame = CGRectMake(0, 0, self.bounds.size.width * self.ccLineLengthRatio * 2, self.bounds.size.height * self.ccLineLengthRatio * 2);
         
         NSMutableArray *tmpArr = [[NSMutableArray alloc] init];
-        for (int i=0; i<self.lineCount; i++) {
+        for (int i=0; i<self.ccLineCount; i++) {
             CAShapeLayer *lineLayer   = [CAShapeLayer layer];
             lineLayer.bounds          = self.frame;
             lineLayer.position = CGPointMake(CGRectGetMidX(self.bounds), CGRectGetMidY(self.bounds));
-            lineLayer.backgroundColor = self.lineColor.CGColor;
+            lineLayer.backgroundColor = self.ccLineColor.CGColor;
             
             CAShapeLayer *lineMask = [CAShapeLayer layer];
             CGMutablePathRef shapePath = CGPathCreateMutable();
             CGPathMoveToPoint(shapePath, nil, CGRectGetMidX(lineFrame), CGRectGetMidY(lineFrame));
-            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 + 0.5*self.lineWidth, lineFrame.origin.y);
-            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 - 0.5*self.lineWidth, lineFrame.origin.y);
+            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 + 0.5*self.ccLineWidth, lineFrame.origin.y);
+            CGPathAddLineToPoint(shapePath, nil, lineFrame.origin.x + lineFrame.size.width / 2 - 0.5*self.ccLineWidth, lineFrame.origin.y);
             CGPathAddLineToPoint(shapePath, nil, CGRectGetMidX(lineFrame), CGRectGetMidY(lineFrame));
             lineMask.path = shapePath;
             CGPathRelease(shapePath);
@@ -254,21 +273,94 @@
             lineMask.fillColor = [UIColor whiteColor].CGColor;
             lineMask.fillRule = kCAFillRuleEvenOdd;
             
-            lineLayer.transform = CATransform3DMakeRotation((2 * M_PI / self.lineCount) * (i + 1), 0.0, 0.0, 1.0);
+            lineLayer.transform = CATransform3DMakeRotation((2 * M_PI / self.ccLineCount) * (i + 1), 0.0, 0.0, 1.0);
             lineLayer.mask = lineMask;
             
             [tmpArr addObject: lineLayer];
         }
-        _lines = [NSArray<CAShapeLayer *> arrayWithArray:tmpArr];
+        NSArray<CAShapeLayer *> *newlines = [NSArray<CAShapeLayer *> arrayWithArray:tmpArr];
+        objc_setAssociatedObject(self, &ccLines, newlines, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return newlines;
     }
-    return _lines;
+    return lines_;
 }
 
--(void)setSelected:(BOOL)selected{
-    [super setSelected:selected];
-    if (selected) {
+
+#pragma mark -
+#pragma mark - appearance setter
+
+-(NSInteger)ccLineCount{
+    NSNumber *count = [[self getPropsDict] valueForKey:lineCountKey];
+    return count.integerValue;
+}
+-(void)setCcLineCount:(NSInteger)lineCount{
+    [[self getPropsDict] setValue:@(lineCount) forKey:lineCountKey];
+}
+
+-(CGFloat)ccLineWidth{
+    NSNumber *width = [[self getPropsDict] valueForKey:lineWidthKey];
+    return width.doubleValue;
+}
+-(void)setCcLineWidth:(CGFloat)lineWidth{
+    [[self getPropsDict] setValue:@(lineWidth) forKey:lineWidthKey];
+}
+
+-(CGFloat)ccLineLengthRatio{
+    NSNumber *percent = [[self getPropsDict] valueForKey:lineLengthPercentKey];
+    return percent.doubleValue;
+}
+-(void)setCcLineLengthRatio:(CGFloat)lineLengthPercent{
+    [[self getPropsDict] setValue:@(lineLengthPercent) forKey:lineLengthPercentKey];
+}
+
+-(CGFloat)ccImgSizeRatio{
+    NSNumber *percent = [[self getPropsDict] valueForKey:imgSizePercentKey];
+    return percent.doubleValue;
+}
+-(void)setCcImgSizeRatio:(CGFloat)imgSizePercent{
+    [[self getPropsDict] setValue:@(imgSizePercent) forKey:imgSizePercentKey];
+}
+
+-(CFTimeInterval)ccAnimationTime{
+    NSNumber *time = [[self getPropsDict] valueForKey:animationTimeKey];
+    return time.doubleValue;
+}
+-(void)setCcAnimationTime:(CFTimeInterval)animationTime{
+    [[self getPropsDict] setValue:@(animationTime) forKey:animationTimeKey];
+}
+
+-(UIColor *)ccLineColor{
+    UIColor *color = [[self getPropsDict] valueForKey:lineColorKey];
+    return color;
+}
+-(void)setCcLineColor:(UIColor *)lineColor{
+    [[self getPropsDict] setValue:lineColor forKey:lineColorKey];
+}
+
+
+-(NSMutableDictionary *)getPropsDict{
+    NSMutableDictionary *propsDic = objc_getAssociatedObject(self, &ccAnimationPropsDict);
+    if (propsDic == nil){
+        NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithCapacity:10];
+        objc_setAssociatedObject(self, &ccAnimationPropsDict, newDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        return newDic;
+    }
+    return propsDic;
+}
+
+#pragma mark -
+#pragma mark - public mehtod
+
+-(BOOL)ccFavorite{
+    NSNumber *favorite = [[self getPropsDict] valueForKey:@"ccFavorite"];
+    return favorite.boolValue;
+}
+-(void)setCcFavorite:(BOOL)ccFavorite{
+    [[self getPropsDict] setValue:@(ccFavorite) forKey:@"ccFavorite"];
+    
+    if(ccFavorite){
         [self makeChosenAnimation];
-    }else{
+    } else {
         [self makeUnchosenAnimation];
     }
 }

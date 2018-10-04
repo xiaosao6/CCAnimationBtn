@@ -7,16 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		451319A62165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 451319A52165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.m */; };
 		45DF6B321FC93EF6001D8376 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B311FC93EF6001D8376 /* AppDelegate.m */; };
 		45DF6B351FC93EF6001D8376 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B341FC93EF6001D8376 /* ViewController.m */; };
 		45DF6B381FC93EF6001D8376 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45DF6B361FC93EF6001D8376 /* Main.storyboard */; };
 		45DF6B3A1FC93EF6001D8376 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 45DF6B391FC93EF6001D8376 /* Assets.xcassets */; };
 		45DF6B3D1FC93EF6001D8376 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 45DF6B3B1FC93EF6001D8376 /* LaunchScreen.storyboard */; };
 		45DF6B401FC93EF6001D8376 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B3F1FC93EF6001D8376 /* main.m */; };
-		45DF6B481FC93F2A001D8376 /* CCAnimationBtn.m in Sources */ = {isa = PBXBuildFile; fileRef = 45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		451319A42165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIButton+CCFavoriteAnimation.h"; sourceTree = "<group>"; };
+		451319A52165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIButton+CCFavoriteAnimation.m"; sourceTree = "<group>"; };
 		45DF6B2D1FC93EF6001D8376 /* AnimationButton.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnimationButton.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		45DF6B301FC93EF6001D8376 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		45DF6B311FC93EF6001D8376 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -27,8 +29,6 @@
 		45DF6B3C1FC93EF6001D8376 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		45DF6B3E1FC93EF6001D8376 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		45DF6B3F1FC93EF6001D8376 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		45DF6B461FC93F2A001D8376 /* CCAnimationBtn.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCAnimationBtn.h; sourceTree = "<group>"; };
-		45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CCAnimationBtn.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,8 +45,8 @@
 		45564E3E1FCD33ED0077FC46 /* CCAnimationBtn */ = {
 			isa = PBXGroup;
 			children = (
-				45DF6B461FC93F2A001D8376 /* CCAnimationBtn.h */,
-				45DF6B471FC93F2A001D8376 /* CCAnimationBtn.m */,
+				451319A42165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.h */,
+				451319A52165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.m */,
 			);
 			path = CCAnimationBtn;
 			sourceTree = "<group>";
@@ -156,9 +156,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				45DF6B351FC93EF6001D8376 /* ViewController.m in Sources */,
-				45DF6B481FC93F2A001D8376 /* CCAnimationBtn.m in Sources */,
 				45DF6B401FC93EF6001D8376 /* main.m in Sources */,
 				45DF6B321FC93EF6001D8376 /* AppDelegate.m in Sources */,
+				451319A62165B31400AD7DB1 /* UIButton+CCFavoriteAnimation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +293,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LXTMZWPQ5S;
+				DEVELOPMENT_TEAM = MFZ2U95PAT;
 				INFOPLIST_FILE = AnimationButton/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -308,7 +308,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = LXTMZWPQ5S;
+				DEVELOPMENT_TEAM = MFZ2U95PAT;
 				INFOPLIST_FILE = AnimationButton/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
