@@ -345,6 +345,7 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 }
 -(void)setCcUnchosenColor:(UIColor *)ccUnchosenColor{
     [[self getPropsDict] setValue:ccUnchosenColor forKey:unchosenColorKey];
+    self.unChosenImgLayer.backgroundColor = ccUnchosenColor.CGColor;
 }
 
 
