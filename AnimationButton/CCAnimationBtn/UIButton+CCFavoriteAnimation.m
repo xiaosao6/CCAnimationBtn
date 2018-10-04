@@ -21,6 +21,7 @@ static NSString *lineLengthPercentKey   = @"lineLengthPercent";
 static NSString *imgSizePercentKey      = @"imgSizePercent";
 static NSString *animationTimeKey       = @"animationTime";
 static NSString *lineColorKey           = @"lineColor";
+static NSString *unchosenColorKey       = @"unchosenColor";
 
 
 @implementation UIButton (CCFavoriteAnimation)
@@ -48,6 +49,7 @@ static NSString *lineColorKey           = @"lineColor";
     self.ccImgSizeRatio  = 0.7;
     self.ccAnimationTime = 1.2;
     self.ccLineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
+    self.ccUnchosenColor = UIColor.whiteColor;
     
     self.layer.masksToBounds = YES;
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
@@ -240,7 +242,7 @@ static NSString *lineColorKey           = @"lineColor";
 -(CALayer *)unChosenImgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
     if (layer == nil){
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:UIColor.whiteColor];
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.ccUnchosenColor];
         objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -335,6 +337,14 @@ static NSString *lineColorKey           = @"lineColor";
 }
 -(void)setCcLineColor:(UIColor *)lineColor{
     [[self getPropsDict] setValue:lineColor forKey:lineColorKey];
+}
+
+-(UIColor *)ccUnchosenColor{
+    UIColor *color = [[self getPropsDict] valueForKey:unchosenColorKey];
+    return color;
+}
+-(void)setCcUnchosenColor:(UIColor *)ccUnchosenColor{
+    [[self getPropsDict] setValue:ccUnchosenColor forKey:unchosenColorKey];
 }
 
 

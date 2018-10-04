@@ -42,6 +42,11 @@
  */
 @property (nonatomic, strong) UIColor *ccLineColor;
 
+/**
+ 未点赞时的颜色，默认白色
+ */
+@property (nonatomic, strong) UIColor *ccUnchosenColor;
+
 
 
 
