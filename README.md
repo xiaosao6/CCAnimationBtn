@@ -9,7 +9,9 @@ A category of UIButton imitates the animation effect of favor button in DouYin A
 -------------
 
 ### 效果:
-![image](https://github.com/xiaosao6/CCAnimationBtn/blob/master/btn-anim.gif)
+<video id="video" controls="" preload="none" poster="https://github.com/xiaosao6/CCAnimationBtn/blob/master/btn-anim-preview.png">
+      <source id="mp4" src="https://github.com/xiaosao6/CCAnimationBtn/blob/master/btn-anim.mp4" type="video/mp4">
+      </video>
 
 ### 示例:  
 ```oc
