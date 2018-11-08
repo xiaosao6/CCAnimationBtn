@@ -6,7 +6,7 @@
 //  Copyright © 2018年 Xiaosao6. All rights reserved.
 //
 
-#import "UIButton+ccFavoriteAnimation.h"
+#import "UIButton+CCFavoriteAnimation.h"
 #import <objc/runtime.h>
 
 
@@ -175,10 +175,10 @@ static NSString *unchosenColorKey       = @"unchosenColor";
     return anim_spring;
 }
 
-+(CALayer *)heartLayerWithFrame:(CGRect)rect FillColor:(UIColor *)fillColor{
++(CALayer *)heartLayerWithFrame:(CGRect)rect withColor:(UIColor *)color isFill:(BOOL)fill{
     CALayer *visibleLayer = [CALayer layer];
     visibleLayer.frame = rect;
-    visibleLayer.backgroundColor = fillColor.CGColor;
+    visibleLayer.backgroundColor = color.CGColor;
     //注意，此心形形状是按照顶部凹角90°来绘制的，需要调整可自行修改
     // 左右边距
     CGFloat padding = 4.0;
@@ -204,19 +204,30 @@ static NSString *unchosenColorKey       = @"unchosenColor";
     // 添加二次曲线
     [heartPath addQuadCurveToPoint:tipLocation controlPoint:CGPointMake(topRightCurveEnd.x, topRightCurveEnd.y+curveRadius)];
     // 设置填充色
-    [fillColor setFill];
+    [color setFill];
     [heartPath fill];
     
     //轮廓蒙版
     CAShapeLayer *shapeMask = [CAShapeLayer layer];
-    shapeMask.path = heartPath.CGPath;
-    shapeMask.bounds = rect;
-    shapeMask.position = visibleLayer.position;
-    shapeMask.fillColor = [UIColor whiteColor].CGColor;
-    shapeMask.fillRule = kCAFillRuleEvenOdd;
     
-    visibleLayer.mask = shapeMask;
-    return visibleLayer;
+    if (fill) {
+        shapeMask.bounds = rect;
+        shapeMask.fillColor = [UIColor whiteColor].CGColor;
+        shapeMask.fillRule = kCAFillRuleEvenOdd;
+    } else {
+        shapeMask.frame = rect;
+        shapeMask.fillColor = [UIColor clearColor].CGColor;
+        shapeMask.strokeColor = color.CGColor;
+    }
+    shapeMask.path = heartPath.CGPath;
+    shapeMask.position = visibleLayer.position;
+    
+    if (fill) {
+        visibleLayer.mask = shapeMask;
+        return visibleLayer;
+    } else {
+        return shapeMask;
+    }
 }
 
 -(CGRect)imageLayerFrame{
@@ -232,7 +243,7 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 -(CALayer *)imgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccImgLayer);
     if (layer == nil){
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.ccLineColor];
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccLineColor isFill:YES];
         objc_setAssociatedObject(self, &ccImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -242,7 +253,7 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 -(CALayer *)unChosenImgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
     if (layer == nil){
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] FillColor:self.ccUnchosenColor];
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:NO];
         objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -345,7 +356,7 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 }
 -(void)setCcUnchosenColor:(UIColor *)ccUnchosenColor{
     [[self getPropsDict] setValue:ccUnchosenColor forKey:unchosenColorKey];
-    self.unChosenImgLayer.backgroundColor = ccUnchosenColor.CGColor;
+//    self.unChosenImgLayer.backgroundColor = ccUnchosenColor.CGColor;
 }
 
 
