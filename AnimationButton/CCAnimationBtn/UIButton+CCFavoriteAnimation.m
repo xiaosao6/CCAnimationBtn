@@ -32,15 +32,30 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 #pragma mark - setup
 
 - (void)setupUI{
-    self.ccLineCount = 6;
-    self.ccLineWidth = 10.0;
-    self.ccLineLengthRatio = 0.4;
-    self.ccImgSizeRatio  = 0.7;
-    self.ccAnimationTime = 1.2;
-    self.ccLineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
-    self.ccUnchosenColor = UIColor.whiteColor;
-    
     self.layer.masksToBounds = YES;
+    
+    if (self.ccLineCount == 0) {
+        self.ccLineCount = 6;
+    }
+    if (self.ccLineWidth == 0) {
+        self.ccLineWidth = 10.0;
+    }
+    if (self.ccLineLengthRatio == 0) {
+        self.ccLineLengthRatio = 0.4;
+    }
+    if (self.ccImgSizeRatio == 0) {
+        self.ccImgSizeRatio  = 0.7;
+    }
+    if (self.ccAnimationTime == 0) {
+        self.ccAnimationTime = 1.2;
+    }
+    if (!self.ccLineColor) {
+        self.ccLineColor = [UIColor colorWithRed:0.9686 green:0.2863 blue:0.4471 alpha:1];
+    }
+    if (!self.ccUnchosenColor) {
+        self.ccUnchosenColor = UIColor.whiteColor;
+    }
+    
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
 //    self.layer.borderWidth = 2;
     
