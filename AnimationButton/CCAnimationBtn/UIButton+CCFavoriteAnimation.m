@@ -22,25 +22,14 @@ static NSString *imgSizePercentKey      = @"imgSizePercent";
 static NSString *animationTimeKey       = @"animationTime";
 static NSString *lineColorKey           = @"lineColor";
 static NSString *unchosenColorKey       = @"unchosenColor";
+static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 
 
 @implementation UIButton (CCFavoriteAnimation)
 
 
 #pragma mark -
-#pragma mark - init
-- (instancetype)initWithFrame:(CGRect)frame {
-    if (self = [super initWithFrame:frame]) {
-        [self setupUI];
-    }
-    return self;
-}
--(instancetype)initWithCoder:(NSCoder *)aDecoder{
-    if (self = [super initWithCoder:aDecoder]) {
-        [self setupUI];
-    }
-    return self;
-}
+#pragma mark - setup
 
 - (void)setupUI{
     self.ccLineCount = 6;
@@ -55,7 +44,9 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
 //    self.layer.borderWidth = 2;
     
-    [self.layer addSublayer:self.unChosenImgLayer];
+    if (![self.layer.sublayers containsObject:self.unChosenImgLayer]) {
+        [self.layer addSublayer:self.unChosenImgLayer];
+    }
 }
 
 #pragma mark -
@@ -253,7 +244,8 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 -(CALayer *)unChosenImgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
     if (layer == nil){
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:NO];
+        BOOL isStroke = self.isCcIsUnchosenStyleStroke;
+        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:!isStroke];
         objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -356,7 +348,14 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 }
 -(void)setCcUnchosenColor:(UIColor *)ccUnchosenColor{
     [[self getPropsDict] setValue:ccUnchosenColor forKey:unchosenColorKey];
-//    self.unChosenImgLayer.backgroundColor = ccUnchosenColor.CGColor;
+}
+
+-(BOOL)isCcIsUnchosenStyleStroke{
+    NSNumber *value = [[self getPropsDict] valueForKey:isUnchosenStyleStrokeKey];
+    return value.boolValue;
+}
+-(void)setCcIsUnchosenStyleStroke:(BOOL)ccIsUnchosenStyleStroke{
+    [[self getPropsDict] setValue:@(ccIsUnchosenStyleStroke) forKey:isUnchosenStyleStrokeKey];
 }
 
 
@@ -379,6 +378,8 @@ static NSString *unchosenColorKey       = @"unchosenColor";
 }
 -(void)setCcFavorite:(BOOL)ccFavorite{
     [[self getPropsDict] setValue:@(ccFavorite) forKey:@"ccFavorite"];
+    
+    [self setupUI];
     
     if(ccFavorite){
         [self makeChosenAnimation];

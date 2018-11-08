@@ -47,6 +47,10 @@
  */
 @property (nonatomic, strong) UIColor *ccUnchosenColor;
 
+/**
+ 未点赞时,样式是否为线条, 默认NO(填充)
+ */
+@property (nonatomic, assign) BOOL ccIsUnchosenStyleStroke;
 
 
 
