@@ -23,6 +23,7 @@ static NSString *animationTimeKey       = @"animationTime";
 static NSString *lineColorKey           = @"lineColor";
 static NSString *unchosenColorKey       = @"unchosenColor";
 static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
+static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
 
 
 @implementation UIButton (CCFavoriteAnimation)
@@ -30,6 +31,21 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 
 #pragma mark -
 #pragma mark - setup
+
++(void)load{
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        method_exchangeImplementations(class_getInstanceMethod(self.class, @selector(layoutSubviews)),
+                                       class_getInstanceMethod(self.class, @selector(cc_swizzled_layoutSubviews)));
+    });
+}
+
+-(void)cc_swizzled_layoutSubviews {
+    if (self.ccIsFavoriteAnimationEnabled) {
+        [self setupUI];
+    }
+    [self cc_swizzled_layoutSubviews];
+}
 
 - (void)setupUI{
     self.layer.masksToBounds = YES;
@@ -259,7 +275,7 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 -(CALayer *)unChosenImgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
     if (layer == nil){
-        BOOL isStroke = self.isCcIsUnchosenStyleStroke;
+        BOOL isStroke = self.ccIsUnchosenStyleStroke;
         CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:!isStroke];
         objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
@@ -365,7 +381,7 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
     [[self getPropsDict] setValue:ccUnchosenColor forKey:unchosenColorKey];
 }
 
--(BOOL)isCcIsUnchosenStyleStroke{
+-(BOOL)ccIsUnchosenStyleStroke{
     NSNumber *value = [[self getPropsDict] valueForKey:isUnchosenStyleStrokeKey];
     return value.boolValue;
 }
@@ -377,7 +393,7 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 -(NSMutableDictionary *)getPropsDict{
     NSMutableDictionary *propsDic = objc_getAssociatedObject(self, &ccAnimationPropsDict);
     if (propsDic == nil){
-        NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithCapacity:10];
+        NSMutableDictionary *newDic = [NSMutableDictionary dictionaryWithCapacity:20];
         objc_setAssociatedObject(self, &ccAnimationPropsDict, newDic, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newDic;
     }
@@ -387,16 +403,21 @@ static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 #pragma mark -
 #pragma mark - public mehtod
 
--(BOOL)ccFavorite{
-    NSNumber *favorite = [[self getPropsDict] valueForKey:@"ccFavorite"];
-    return favorite.boolValue;
+-(BOOL)ccIsFavoriteAnimationEnabled{
+    NSNumber *value = [[self getPropsDict] valueForKey:isFavoriteAnimationEnabledKey];
+    return value.boolValue;
 }
--(void)setCcFavorite:(BOOL)ccFavorite{
-    [[self getPropsDict] setValue:@(ccFavorite) forKey:@"ccFavorite"];
-    
-    [self setupUI];
-    
-    if(ccFavorite){
+-(void)setCcIsFavoriteAnimationEnabled:(BOOL)ccIsFavoriteAnimationEnabled{
+    [[self getPropsDict] setValue:@(ccIsFavoriteAnimationEnabled) forKey:isFavoriteAnimationEnabledKey];
+}
+
+-(BOOL)ccIsFavorite{
+    NSNumber *value = [[self getPropsDict] valueForKey:@"ccIsFavorite"];
+    return value.boolValue;
+}
+-(void)setCcIsFavorite:(BOOL)ccIsFavorite{
+    [[self getPropsDict] setValue:@(ccIsFavorite) forKey:@"ccIsFavorite"];
+    if(ccIsFavorite){
         [self makeChosenAnimation];
     } else {
         [self makeUnchosenAnimation];

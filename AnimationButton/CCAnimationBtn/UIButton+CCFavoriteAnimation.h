@@ -52,13 +52,17 @@
  */
 @property (nonatomic, assign) BOOL ccIsUnchosenStyleStroke;
 
+/**
+ 是否打开点赞icon样式, 默认NO
+ */
+@property (nonatomic, assign) BOOL ccIsFavoriteAnimationEnabled;
+
 
 
 /**
  是否点赞,默认带有动画
  */
-@property (nonatomic, assign) BOOL ccFavorite;
-
+@property (nonatomic, assign) BOOL ccIsFavorite;
 
 
 @end

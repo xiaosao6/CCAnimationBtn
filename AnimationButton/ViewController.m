@@ -20,12 +20,13 @@
     self.view.backgroundColor = [UIColor colorWithWhite:1 alpha:0.86];
     
     UIButton *btn = [[UIButton alloc] initWithFrame:CGRectMake(60, 60, 150, 150)];
+    btn.ccIsFavoriteAnimationEnabled = YES;
     [btn addTarget:self action:@selector(btnClicked:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:btn];
 }
 
 -(void)btnClicked:(UIButton *)btn{
-    btn.ccFavorite = !btn.ccFavorite;
+    btn.ccIsFavorite = !btn.ccIsFavorite;
 }
 
 
