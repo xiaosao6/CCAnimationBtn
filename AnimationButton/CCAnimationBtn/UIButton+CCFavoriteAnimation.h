@@ -53,6 +53,12 @@
 @property (nonatomic, assign) BOOL ccIsUnchosenStyleStroke;
 
 /**
+ 未点赞时,线条样式宽度, 默认5
+ */
+@property (nonatomic, assign) CGFloat ccUnchosenStrokeWidth;
+
+
+/**
  是否打开点赞icon样式, 默认NO
  */
 @property (nonatomic, assign) BOOL ccIsFavoriteAnimationEnabled;

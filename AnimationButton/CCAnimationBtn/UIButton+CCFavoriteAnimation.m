@@ -24,6 +24,8 @@ static NSString *lineColorKey           = @"lineColor";
 static NSString *unchosenColorKey       = @"unchosenColor";
 static NSString *isUnchosenStyleStrokeKey = @"isUnchosenStyleStroke";
 static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
+static NSString *ccUnchosenStrokeWidthKey = @"ccUnchosenStrokeWidth";
+
 
 
 @implementation UIButton (CCFavoriteAnimation)
@@ -70,6 +72,9 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
     }
     if (!self.ccUnchosenColor) {
         self.ccUnchosenColor = UIColor.whiteColor;
+    }
+    if (self.ccUnchosenStrokeWidth == 0) {
+        self.ccUnchosenStrokeWidth = 5;
     }
     
 //    self.layer.borderColor = [UIColor grayColor].CGColor;
@@ -197,7 +202,7 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
     return anim_spring;
 }
 
-+(CALayer *)heartLayerWithFrame:(CGRect)rect withColor:(UIColor *)color isFill:(BOOL)fill{
+-(CALayer *)heartLayerWithFrame:(CGRect)rect withColor:(UIColor *)color isFill:(BOOL)fill{
     CALayer *visibleLayer = [CALayer layer];
     visibleLayer.frame = rect;
     visibleLayer.backgroundColor = color.CGColor;
@@ -225,9 +230,6 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
     CGPoint topRightCurveEnd = CGPointMake((rect.size.width - padding), topLeftCurveStart.y);
     // 添加二次曲线
     [heartPath addQuadCurveToPoint:tipLocation controlPoint:CGPointMake(topRightCurveEnd.x, topRightCurveEnd.y+curveRadius)];
-    // 设置填充色
-    [color setFill];
-    [heartPath fill];
     
     //轮廓蒙版
     CAShapeLayer *shapeMask = [CAShapeLayer layer];
@@ -248,6 +250,8 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
         visibleLayer.mask = shapeMask;
         return visibleLayer;
     } else {
+        shapeMask.lineWidth = self.ccUnchosenStrokeWidth;
+        shapeMask.lineCap = @"round";
         return shapeMask;
     }
 }
@@ -265,7 +269,7 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
 -(CALayer *)imgLayer{
     CALayer *layer = objc_getAssociatedObject(self, &ccImgLayer);
     if (layer == nil){
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccLineColor isFill:YES];
+        CALayer *newLayer = [self heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccLineColor isFill:YES];
         objc_setAssociatedObject(self, &ccImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -276,7 +280,7 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
     CALayer *layer = objc_getAssociatedObject(self, &ccUnChosenImgLayer);
     if (layer == nil){
         BOOL isStroke = self.ccIsUnchosenStyleStroke;
-        CALayer *newLayer = [self.class heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:!isStroke];
+        CALayer *newLayer = [self heartLayerWithFrame:[self imageLayerFrame] withColor:self.ccUnchosenColor isFill:!isStroke];
         objc_setAssociatedObject(self, &ccUnChosenImgLayer, newLayer, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         return newLayer;
     }
@@ -388,7 +392,13 @@ static NSString *isFavoriteAnimationEnabledKey = @"isFavoriteAnimationEnabled";
 -(void)setCcIsUnchosenStyleStroke:(BOOL)ccIsUnchosenStyleStroke{
     [[self getPropsDict] setValue:@(ccIsUnchosenStyleStroke) forKey:isUnchosenStyleStrokeKey];
 }
-
+-(CGFloat)ccUnchosenStrokeWidth{
+    NSNumber *value = [[self getPropsDict] valueForKey:ccUnchosenStrokeWidthKey];
+    return value.doubleValue;
+}
+-(void)setCcUnchosenStrokeWidth:(CGFloat)ccUnchosenStrokeWidth{
+    [[self getPropsDict] setValue:@(ccUnchosenStrokeWidth) forKey:ccUnchosenStrokeWidthKey];
+}
 
 -(NSMutableDictionary *)getPropsDict{
     NSMutableDictionary *propsDic = objc_getAssociatedObject(self, &ccAnimationPropsDict);
